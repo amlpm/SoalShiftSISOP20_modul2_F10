@@ -1,6 +1,6 @@
 # SoalShiftSISOP20_modul2_F10
 
-## 1. Soal Satu :
+### 1. Soal Satu :
 
 Buatlah program C yang menyerupai crontab untuk menjalankan script bash dengan
 ketentuan sebagai berikut:
@@ -188,12 +188,34 @@ Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50
 - Mengubah directory menggunakan ```chdir()``` agar hasil yang diperoleh akan masuk ke directory yang kita mau
 - Eksekusi perintah menggunakan ```execv```
 
-## 3. Soal Tiga :
+### 3. Soal Tiga :
 
-**a. Program buatan jaya harus bisa membuat dua direktori di “/home/[USER]/modul2/”. Direktori yang pertama diberi nama “indomie”, lalu lima detik kemudian membuat direktori yang kedua bernama “sedaap”.**
+##### a. Program buatan jaya harus bisa membuat dua direktori di “/home/[USER]/modul2/”. Direktori yang pertama diberi nama “indomie”, lalu lima detik kemudian membuat direktori yang kedua bernama “sedaap”.
+```Javascript
+	pid_t pid = fork();
 
+	if(pid < 0)
+		exit(EXIT_FAILURE);
 
+	if(chdir("/home/geizka") < 0){
+		exit(EXIT_FAILURE);
+	}
 
+	if(pid == 0){
+		pid = fork();
+		if(pid < 0)
+			exit(EXIT_FAILURE);
+		if(pid == 0){
+			char * arg[] = {"mkdir", "-p", "./modul2/indomie", NULL};
+			execv("/bin/mkdir", arg);
+		}
+		wait(NULL);
+		sleep(5);
+		char * arg[] = {"mkdir", "-p", "./modul2/sedaap", NULL};
+		execv("/bin/mkdir", arg);
+	}
+```
+- Untuk membuat direktori, ```fork()``` dulu. Apabila merupakan child process, maka buat direktori, lalu jalankan program menggunakan perintah ```execv()```
 
 
 
