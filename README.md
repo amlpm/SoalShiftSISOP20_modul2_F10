@@ -191,11 +191,53 @@ Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50
 
 ### 2. Soal Dua :
 
+#### a.Pertama-tama, Kiwa membuat sebuah folder khusus, di dalamnya dia membuat sebuah program C yang per 30 detik membuat sebuah folder dengan nama timestamp [YYYY-mm-dd_HH:ii:ss].
+Jawab
+```Javascript
+pid_t p = fork();
+		time_t t = time(NULL);
+		struct tm tt = *localtime(&t);
+		char folderName[20];
+		snprintf(folderName, sizeof(folderName), "%04d-%02d-%02d_%02d:%02d:%02d", tt.tm_year + 1900, tt.tm_mon+1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec);
+		if(p == 0){
+			p = fork();
+			if(p == 0){
+				char * arg[] = {"mkdir", "-p", folderName, NULL};
+				execv("/bin/mkdir", arg);
+			}
+			wait(NULL)
+```
+- Apabila child process, maka buat direktori menggunakan command ```mkdir -p``` dengan nama yang sudah di tentukan. 
+- Memberi nama pada direktori menggunakan  ```struct tm tt = *localtime(&t)``` untuk mengambil argument tipe data ```time_t t``` dimana t adalah detik Epoch UNIX yang mengambil waktu [YYYY-mm-dd_HH:ii:ss]
+-  Jalankan program menggunakan perintah ```execv()```
+- Menggunakan ```wait(NULL)``` untuk mendelay proses selanjutny sampai child process (membuat direktori) selesai
+
+#### b.Tiap-tiap folder lalu diisi dengan 20 gambar yang di download dari https://picsum.photos/, dimana tiap gambar di download setiap 5 detik. Tiap gambar berbentuk persegi dengan ukuran (t%1000)+100 piksel 
+dimana t adalah detik Epoch Unix. Gambar tersebut diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss].
+Jawab :
+```Javascript
+			 for(int i = 0; i < 20; i++){
+				p = fork();
+				if(p == 0){
+					t = time(NULL);
+					tt = *localtime(&t);
+					char name[50];
+					snprintf(name, sizeof(name), "./%s/%04d-%02d-%02d_%02d:%02d:%02d", folderName, tt.tm_year + 1900, tt.tm_mon+1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec);
+					char url[25];
+					snprintf(url, sizeof(url), "https://picsum.photos/%ld", t%1000+100);
+					char * arg[] = {"wget", "-O", name, url, NULL};
+					execv("/usr/bin/wget", arg);
+				}
+				wait(NULL);
+				sleep(5);
+			}
+```
+
 
 
 ### 3. Soal Tiga :
 
-##### a. Program buatan jaya harus bisa membuat dua direktori di “/home/[USER]/modul2/”. Direktori yang pertama diberi nama “indomie”, lalu lima detik kemudian membuat direktori yang kedua bernama “sedaap”.
+#### a. Program buatan jaya harus bisa membuat dua direktori di “/home/[USER]/modul2/”. Direktori yang pertama diberi nama “indomie”, lalu lima detik kemudian membuat direktori yang kedua bernama “sedaap”.
 Jawab : 
 ```Javascript
 	pid_t pid = fork();
@@ -225,7 +267,7 @@ Jawab :
 - ```wait(NULL)``` untuk mendelay proses pembuatan direktori sedaap yang merupakan proses selanjutnya
 - Menggunakan perintah ```sleep(5)``` karena direktori sedaap akan dibuat 5 detik setelah direktori indomie dibuat 
 
-##### b. Kemudian program tersebut harus meng-ekstrak file jpg.zip di direktori“/home/[USER]/modul2/”. 
+#### b. Kemudian program tersebut harus meng-ekstrak file jpg.zip di direktori“/home/[USER]/modul2/”. 
 Jawab : 
 ```Javascript
 pid = fork();
@@ -240,7 +282,7 @@ pid = fork();
  - Untuk meng unzip file, ```fork()``` dulu. Apabila merupakan child process, maka unzip jpg menggunakan ```unzip()``` , lalu jalankan program menggunakan perintah ```execv()```
  - Menggunakan system call ```wait()``` untuk mendelay proses pemindahan file / direktori ( proses soal no 3 )
 
-##### c. Diberilah tugas baru yaitu setelah di ekstrak, hasil dari ekstrakan tersebut (didalam direktori “home/[USER]/modul2/jpg/”) harus dipindahkan sesuai dengan pengelompokan, semua file harus dipindahkan ke“/home/[USER]/modul2/sedaap/” dan semua direktori harus dipindahkan ke “/home/[USER]/modul2/indomie/”.
+#### c. Diberilah tugas baru yaitu setelah di ekstrak, hasil dari ekstrakan tersebut (didalam direktori “home/[USER]/modul2/jpg/”) harus dipindahkan sesuai dengan pengelompokan, semua file harus dipindahkan ke“/home/[USER]/modul2/sedaap/” dan semua direktori harus dipindahkan ke “/home/[USER]/modul2/indomie/”.
 Jawab :
 ```Javascript
 	struct dirent * de;
@@ -277,7 +319,7 @@ Jawab :
 - Apabila tipe de merupakan file, maka menggunakan fungsi ```snprintf()``` memformat dan menyimpan nama hasil ekstrak (yang ber tipe file) yang mau disimpan di direktori sedaap dalam buffer array.
 - Memindahkan nama hasil ekstrak (yang ber tipe file) ke direktori sedaap menggunakan ```mv```, setelah di ```fork()``` terlebih dahulu
 
-##### d. Untuk setiap direktori yang dipindahkan ke “/home/[USER]/modul2/indomie/”harus membuat dua file kosong. File yang pertama diberi nama “coba1.txt”, lalu3 detik kemudian membuat file bernama “coba2.txt”. (contoh : “/home/[USER]/modul2/indomie/{nama_folder}/coba1.txt”).
+#### d. Untuk setiap direktori yang dipindahkan ke “/home/[USER]/modul2/indomie/”harus membuat dua file kosong. File yang pertama diberi nama “coba1.txt”, lalu3 detik kemudian membuat file bernama “coba2.txt”. (contoh : “/home/[USER]/modul2/indomie/{nama_folder}/coba1.txt”).
 Jawab : 
 ```Javascript
 snprintf(fileName, sizeof(fileName), "%s/coba1.txt", destName);
