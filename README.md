@@ -1,1 +1,2 @@
-SoalShiftSISOP20_modul2_F10
+Praktikum 2 SISOP
+
