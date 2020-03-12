@@ -6,6 +6,7 @@ Buatlah program C yang menyerupai crontab untuk menjalankan script bash dengan
 ketentuan sebagai berikut:
 
 Jawab : 
+
 Fungsi untuk mengecek apakah string yang diinputkan * atau tidak
 ```Javascript
 int isStar(char * str){
@@ -191,6 +192,7 @@ Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50
 ### 3. Soal Tiga :
 
 ##### a. Program buatan jaya harus bisa membuat dua direktori di “/home/[USER]/modul2/”. Direktori yang pertama diberi nama “indomie”, lalu lima detik kemudian membuat direktori yang kedua bernama “sedaap”.
+Jawab : 
 ```Javascript
 	pid_t pid = fork();
 
@@ -215,9 +217,60 @@ Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50
 		execv("/bin/mkdir", arg);
 	}
 ```
-- Untuk membuat direktori, ```fork()``` dulu. Apabila merupakan child process, maka buat direktori, lalu jalankan program menggunakan perintah ```execv()```
+- Untuk membuat direktori pertama (indomie), ```fork()``` dulu. Apabila merupakan child process, maka buat direktori menggunakan ```mkdir -p```, lalu jalankan program menggunakan perintah ```execv()```
+- Menggunakan system call ```wait()``` untuk mendelay proses pembuatan direktori kedua (sedaap)
 
+##### b. Kemudian program tersebut harus meng-ekstrak file jpg.zip di direktori“/home/[USER]/modul2/”. 
+```Javascript
+pid = fork();
+	if(pid < 0)
+		exit(EXIT_FAILURE);
+	if(pid == 0){
+		char * arg[] = {"unzip", "./modul2/jpg.zip", "-d", "./modul2", NULL};
+		execv("/usr/bin/unzip", arg);
+	}
+	wait(NULL);
+```
+ - Untuk meng unzip file, ```fork()``` dulu. Apabila merupakan child process, maka unzip jpg menggunakan ```unzip()``` , lalu jalankan program menggunakan perintah ```execv()```
+ - Menggunakan system call ```wait()``` untuk mendelay proses pemindahan file / direktori ( proses soal no 3 )
 
+##### c. Diberilah tugas baru yaitu setelah di ekstrak, hasil dari ekstrakan tersebut (didalam direktori “home/[USER]/modul2/jpg/”) harus dipindahkan sesuai dengan pengelompokan, semua file harus dipindahkan ke“/home/[USER]/modul2/sedaap/” dan semua direktori harus dipindahkan ke “/home/[USER]/modul2/indomie/”.
+```Javascript
+struct dirent * de;
+	DIR * directory = opendir("./modul2/jpg");
+	while((de = readdir(directory)) != NULL){
+		if(strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
+			continue;
+		char fileName[300];
+		char destName[300];
+		if(de->d_type == DT_DIR){
+			snprintf(fileName, sizeof(fileName), "./modul2/jpg/%s", de->d_name);
+			snprintf(destName, sizeof(destName), "./modul2/indomie/%s", de->d_name);
+			pid = fork();
+			if(pid == 0){
+				char * arg[] = {"mv", fileName, destName, NULL};
+				execv("/bin/mv", arg);
+			}
+			else{
+			snprintf(fileName, sizeof(fileName), "./modul2/jpg/%s", de->d_name);
+			snprintf(destName, sizeof(destName), "./modul2/sedaap/%s", de->d_name);
+			pid = fork();
+			if(pid == 0){
+				char * arg[] = {"mv", fileName, destName, NULL};
+				execv("/bin/mv", arg);
+			}
+			wait(NULL);
+		}
+	}
+}
+```
+-  ```struct dirent * de``` adalah struct untuk membaca file yang ada di direktori
+- Perintah akan dijalankan apabila directory tidak kosong, sehingga menggunakan perintah ```readdir(directory)```
+- Apabila direktori berupa . dan .., maka direktori tidak termasuk (proses jalan terus / continue), sehingga harus dibandingkan dengan de menggunakan ```strcmp()```
+- Apabila tipe de merupakan direktori, maka menggunakan fungsi ```snprintf()``` memformat dan menyimpan nama hasil ekstrak (yang ber tipe direktori) yang mau disimpan di direktori indomie dalam buffer array.
+- Memindahkan nama hasil ekstrak (yang ber tipe direktori) ke direktori indomie menggunakan ```mv```, setelah di ```fork()``` terlebih dahulu
+- Apabila tipe de merupakan file, maka menggunakan fungsi ```snprintf()``` memformat dan menyimpan nama hasil ekstrak (yang ber tipe file) yang mau disimpan di direktori sedaap dalam buffer array.
+- Memindahkan nama hasil ekstrak (yang ber tipe file) ke direktori sedaap menggunakan ```mv```, setelah di ```fork()``` terlebih dahulu
 
 
 
