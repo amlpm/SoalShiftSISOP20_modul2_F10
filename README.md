@@ -171,21 +171,18 @@ Apabila digit input kurang dari waktu sekarang, maka delaynya adalah 23 dikurang
 Misalkan ingin sekarang jam 15.00, dan mau di eksekusi jam 00.00, maka 23 - 15 + 0 = 8 jam delay.
 Apabila digit input lebih dari waktu sekarang, maka delaynya jam yang sekarang dan di kurang jam selanjutnya dimana perintah mau dieksekusi. 
 Misalkan ingin sekarang jam 15.00, dan mau di eksekusi jam 18.00, maka 18 - 15 = 3 jam delay.
-
 - Mengecek menit, apabila berupa *, maka dijalankan setiap menit (tidak pengaruh pada delay), jadi tidak menjalankan apa-apa. 
 Namun apabila menit berupa digit desimal, maka ada 2 kemungkinan, yaitu digit input lebih dari / kurang dari waktu sekarang 
 Apabila digit input kurang dari waktu sekarang, maka delaynya adalah 59 dikurang menit yang sekarang dan di tambah menit selanjutnya dimana perintah mau dieksekusi. 
 Misalkan ingin sekarang menit ke 45, dan mau di eksekusi pada menit ke 30, maka 59 - 45 + 30 = 44 menit delay.
 Apabila digit input lebih dari waktu sekarang, maka delaynya menit yang sekarang dan di kurang menit selanjutnya dimana perintah mau dieksekusi. 
 Misalkan ingin sekarang menit ke 45 dan mau di eksekusi di menit ke 50 , maka 50 - 45 = 5 menit delay.
-
 - Mengecek detik, apabila berupa *, maka dijalankan setiap detik (tidak pengaruh pada delay), jadi tidak menjalankan apa-apa. 
 Namun apabila detik berupa digit desimal, maka ada 2 kemungkinan, yaitu digit input lebih dari / kurang dari waktu sekarang 
 Apabila digit input kurang dari waktu sekarang, maka delaynya adalah 59 dikurang detik yang sekarang dan di tambah detik selanjutnya dimana perintah mau dieksekusi. 
 Misalkan ingin sekarang detik ke 45, dan mau di eksekusi pada detik ke 30, maka 59 - 45 + 30 = 44 detik delay.
 Apabila digit input lebih dari waktu sekarang, maka delaynya detik yang sekarang dan di kurang detik selanjutnya dimana perintah mau dieksekusi. 
 Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50 - 45 = 5 detik delay.
-
 - ```if(timeToSleep == 0)timeToSleep = 1``` digunakan untuk mengset nilai minimum delay yaitu 1 detik
 - Buar child process menggunakan ```fork```
 - Mengubah directory menggunakan ```chdir()``` agar hasil yang diperoleh akan masuk ke directory yang kita mau
