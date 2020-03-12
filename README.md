@@ -194,7 +194,7 @@ Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50
 #### a.Pertama-tama, Kiwa membuat sebuah folder khusus, di dalamnya dia membuat sebuah program C yang per 30 detik membuat sebuah folder dengan nama timestamp [YYYY-mm-dd_HH:ii:ss].
 Jawab
 ```Javascript
-pid_t p = fork();
+	pid_t p = fork();
 		time_t t = time(NULL);
 		struct tm tt = *localtime(&t);
 		char folderName[20];
@@ -211,6 +211,7 @@ pid_t p = fork();
 - Memberi nama pada direktori menggunakan  ```struct tm tt = *localtime(&t)``` untuk mengambil argument tipe data ```time_t t``` dimana t adalah detik Epoch UNIX yang mengambil waktu [YYYY-mm-dd_HH:ii:ss]
 -  Jalankan program menggunakan perintah ```execv()```
 - Menggunakan ```wait(NULL)``` untuk mendelay proses selanjutny sampai child process (membuat direktori) selesai
+- Ada perintah ```sleep(30)``` pada bagian paling akhir dr kodingan yang menunjukkan akan dilakukan perulangan terus setiap 30 detik sampai daemon process nya di kill
 
 #### b.Tiap-tiap folder lalu diisi dengan 20 gambar yang di download dari https://picsum.photos/, dimana tiap gambar di download setiap 5 detik. Tiap gambar berbentuk persegi dengan ukuran (t%1000)+100 piksel 
 dimana t adalah detik Epoch Unix. Gambar tersebut diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss].
@@ -233,6 +234,33 @@ Jawab :
 			}
 ```
 
+#### c.Agar rapi, setelah sebuah folder telah terisi oleh 20 gambar, folder akan di zip dan folder akan di delete(sehingga hanya menyisakan .zip).
+Jawab :
+```Javascript
+			p = fork();
+			if(p == 0){
+				char fileName[30];
+				snprintf(fileName, sizeof(fileName), "%s.zip", folderName);
+				char * arg[] = {"zip", fileName, folderName, NULL};
+				execv("/usr/bin/zip", arg);
+			}
+			wait(NULL);
+			char * arg[] = {"rm", "-r", folderName};
+			execv("/bin/rm", arg);
+			break;
+		}
+		sleep(30)
+```
+
+#### d.Karena takut program tersebut lepas kendali, Kiwa ingin program tersebut men-generate sebuah program "killer" yang siap di run(executable) untuk menterminasi semua operasi program tersebut. 
+Setelah di run, program yang menterminasi ini lalu akan mendelete dirinya sendiri.
+Jawab :
+
+
+### e.Kiwa menambahkan bahwa program utama bisa dirun dalam dua mode, yaitu MODE_A dan MODE_B. untuk mengaktifkan MODE_A, program harus dijalankan dengan argumen -a. 
+Untuk MODE_B, program harus dijalankan dengan argumen -b. Ketika dijalankan dalam MODE_A, program utama akan langsung menghentikan semua operasinya ketika program killer dijalankan. 
+Untuk MODE_B, ketika program killer dijalankan, program utama akan berhenti tapi membiarkan proses di setiap folder yang masih berjalan sampai selesai(semua folder terisi gambar, terzip lalu di delete).
+Jawab :
 
 
 ### 3. Soal Tiga :
