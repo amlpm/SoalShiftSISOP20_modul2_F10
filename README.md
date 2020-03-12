@@ -267,8 +267,8 @@ Jawab :
 				execv("/bin/mv", arg);
 			}
 			wait(NULL);
-	
-```- ```wait(NULL)``` untuk mendelay proses pembuatan file coba2.txt yang merupakan rposes selanjutnya
+```
+- ```wait(NULL)``` untuk mendelay proses pembuatan file coba2.txt yang merupakan rposes selanjutnya
 -  ```struct dirent * de``` adalah struct untuk membaca file yang ada di direktori
 - Perintah akan dijalankan apabila directory tidak kosong, sehingga menggunakan perintah ```readdir(directory)```
 - Apabila direktori berupa . dan .., maka direktori tidak termasuk (proses jalan terus / continue), sehingga harus dibandingkan dengan de menggunakan ```strcmp()```
