@@ -213,8 +213,7 @@ Jawab
 - Menggunakan ```wait(NULL)``` untuk mendelay proses selanjutny sampai child process (membuat direktori) selesai
 - Ada perintah ```sleep(30)``` pada bagian paling akhir dr kodingan yang menunjukkan akan dilakukan perulangan terus setiap 30 detik sampai daemon process nya di kill
 
-#### b.Tiap-tiap folder lalu diisi dengan 20 gambar yang di download dari https://picsum.photos/, dimana tiap gambar di download setiap 5 detik. Tiap gambar berbentuk persegi dengan ukuran (t%1000)+100 piksel 
-dimana t adalah detik Epoch Unix. Gambar tersebut diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss].
+#### b.Tiap-tiap folder lalu diisi dengan 20 gambar yang di download dari https://picsum.photos/, dimana tiap gambar di download setiap 5 detik. Tiap gambar berbentuk persegi dengan ukuran (t%1000)+100 piksel  dimana t adalah detik Epoch Unix. Gambar tersebut diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss].
 Jawab :
 ```Javascript
 			 for(int i = 0; i < 20; i++){
