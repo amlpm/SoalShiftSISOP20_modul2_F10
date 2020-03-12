@@ -186,11 +186,10 @@ Misalkan ingin sekarang detik ke 45, dan mau di eksekusi pada detik ke 30, maka 
 Apabila digit input lebih dari waktu sekarang, maka delaynya detik yang sekarang dan di kurang detik selanjutnya dimana perintah mau dieksekusi. 
 Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50 - 45 = 5 detik delay.
 
--```if(timeToSleep == 0)timeToSleep = 1``` digunakan untuk mengset nilai minimum delay yaitu 1 detik
-- Buar child process 
-
-argc jumlah argumen 
-
+- ```if(timeToSleep == 0)timeToSleep = 1``` digunakan untuk mengset nilai minimum delay yaitu 1 detik
+- Buar child process menggunakan ```fork```
+- Mengubah directory menggunakan ```chdir()``` agar hasil yang diperoleh akan masuk ke directory yang kita mau
+- Eksekusi perintah menggunakan ```execv```
 
 
 
