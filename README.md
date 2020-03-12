@@ -1,6 +1,6 @@
-#Praktikum 2 SISOP
+# SoalShiftSISOP20_modul2_F10
 
-**1. Soal Satu :**
+## 1. Soal Satu :
 
 Buatlah program C yang menyerupai crontab untuk menjalankan script bash dengan
 ketentuan sebagai berikut:
@@ -74,10 +74,10 @@ int main(int argc, char ** argv) {
 
 	int second, minute, hour;
 	
-	assignParam(&second, 0, 59, argv[1]);
-	assignParam(&minute, 0, 59, argv[2]);
-	assignParam(&hour, 0, 23, argv[3]);
-
+ Praktikum 2 SISOPm(&second, 0, 59, argv[1]);
+ Praktikum 2 SISOPm(&minute, 0, 59, argv[2]);
+ Praktikum 2 SISOPm(&hour, 0, 23, argv[3]);
+ Praktikum 2 SISOP
 	if ((chdir("/")) < 0) {
 		exit(EXIT_FAILURE);
 	}
@@ -188,6 +188,9 @@ Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50
 - Mengubah directory menggunakan ```chdir()``` agar hasil yang diperoleh akan masuk ke directory yang kita mau
 - Eksekusi perintah menggunakan ```execv```
 
+## 3. Soal Tiga :
+
+**a. Program buatan jaya harus bisa membuat dua direktori di “/home/[USER]/modul2/”. Direktori yang pertama diberi nama “indomie”, lalu lima detik kemudian membuat direktori yang kedua bernama “sedaap”.**
 
 
 
