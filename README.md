@@ -75,10 +75,10 @@ int main(int argc, char ** argv) {
 
 	int second, minute, hour;
 	
- Praktikum 2 SISOPm(&second, 0, 59, argv[1]);
- Praktikum 2 SISOPm(&minute, 0, 59, argv[2]);
- Praktikum 2 SISOPm(&hour, 0, 23, argv[3]);
- Praktikum 2 SISOP
+ 	assignParanm(&second, 0, 59, argv[1]);
+ 	assignParanm(&minute, 0, 59, argv[2]);
+ 	assignParanm(&hour, 0, 23, argv[3]);
+
 	if ((chdir("/")) < 0) {
 		exit(EXIT_FAILURE);
 	}
@@ -189,6 +189,10 @@ Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50
 - Mengubah directory menggunakan ```chdir()``` agar hasil yang diperoleh akan masuk ke directory yang kita mau
 - Eksekusi perintah menggunakan ```execv```
 
+### 2. Soal Dua :
+
+
+
 ### 3. Soal Tiga :
 
 ##### a. Program buatan jaya harus bisa membuat dua direktori di “/home/[USER]/modul2/”. Direktori yang pertama diberi nama “indomie”, lalu lima detik kemudian membuat direktori yang kedua bernama “sedaap”.
@@ -218,9 +222,11 @@ Jawab :
 	}
 ```
 - Untuk membuat direktori pertama (indomie), ```fork()``` dulu. Apabila merupakan child process, maka buat direktori menggunakan ```mkdir -p```, lalu jalankan program menggunakan perintah ```execv()```
-- Menggunakan system call ```wait()``` untuk mendelay proses pembuatan direktori kedua (sedaap)
+- ```wait(NULL)``` untuk mendelay proses pembuatan direktori sedaap yang merupakan proses selanjutnya
+- Menggunakan perintah ```sleep(5)``` karena direktori sedaap akan dibuat 5 detik setelah direktori indomie dibuat 
 
 ##### b. Kemudian program tersebut harus meng-ekstrak file jpg.zip di direktori“/home/[USER]/modul2/”. 
+Jawab : 
 ```Javascript
 pid = fork();
 	if(pid < 0)
@@ -235,8 +241,9 @@ pid = fork();
  - Menggunakan system call ```wait()``` untuk mendelay proses pemindahan file / direktori ( proses soal no 3 )
 
 ##### c. Diberilah tugas baru yaitu setelah di ekstrak, hasil dari ekstrakan tersebut (didalam direktori “home/[USER]/modul2/jpg/”) harus dipindahkan sesuai dengan pengelompokan, semua file harus dipindahkan ke“/home/[USER]/modul2/sedaap/” dan semua direktori harus dipindahkan ke “/home/[USER]/modul2/indomie/”.
+Jawab :
 ```Javascript
-struct dirent * de;
+	struct dirent * de;
 	DIR * directory = opendir("./modul2/jpg");
 	while((de = readdir(directory)) != NULL){
 		if(strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
@@ -260,10 +267,8 @@ struct dirent * de;
 				execv("/bin/mv", arg);
 			}
 			wait(NULL);
-		}
-	}
-}
-```
+	
+```- ```wait(NULL)``` untuk mendelay proses pembuatan file coba2.txt yang merupakan rposes selanjutnya
 -  ```struct dirent * de``` adalah struct untuk membaca file yang ada di direktori
 - Perintah akan dijalankan apabila directory tidak kosong, sehingga menggunakan perintah ```readdir(directory)```
 - Apabila direktori berupa . dan .., maka direktori tidak termasuk (proses jalan terus / continue), sehingga harus dibandingkan dengan de menggunakan ```strcmp()```
@@ -272,20 +277,29 @@ struct dirent * de;
 - Apabila tipe de merupakan file, maka menggunakan fungsi ```snprintf()``` memformat dan menyimpan nama hasil ekstrak (yang ber tipe file) yang mau disimpan di direktori sedaap dalam buffer array.
 - Memindahkan nama hasil ekstrak (yang ber tipe file) ke direktori sedaap menggunakan ```mv```, setelah di ```fork()``` terlebih dahulu
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+##### d. Untuk setiap direktori yang dipindahkan ke “/home/[USER]/modul2/indomie/”harus membuat dua file kosong. File yang pertama diberi nama “coba1.txt”, lalu3 detik kemudian membuat file bernama “coba2.txt”. (contoh : “/home/[USER]/modul2/indomie/{nama_folder}/coba1.txt”).
+Jawab : 
+```Javascript
+snprintf(fileName, sizeof(fileName), "%s/coba1.txt", destName);
+pid = fork();
+if(pid == 0){
+	char * arg[] = {"touch", fileName, NULL};
+	execv("/usr/bin/touch", arg);
+}
+wait(NULL);
+sleep(3);
+snprintf(fileName, sizeof(fileName), "%s/coba2.txt", destName);
+pid = fork();
+if(pid == 0){
+	char * arg[] = {"touch", fileName, NULL};
+	execv("/usr/bin/touch", arg);
+}
+wait(NULL);
+```
+-  Apabila de bertipe direktori, maka ada 2 file kosong yang akan dibuat, yaitu file coba1.txt dan coba2.txt.
+- Menggunakan fungsi ```snprintf()``` memformat dan menyimpan coba1.txt yang mau disimpan di direktori dalam buffer array.
+- Membuat file coba1.txt menggunakan perintah ```touch()```, dan di eksekusi menggunakan perintah ```execv()```
+- ```wait(NULL)``` untuk mendelay proses pembuatan file coba2.txt yang merupakan rposes selanjutnya
+- Menggunakan perintah ```sleep(3)``` karena file coba2.txt akan dibuat 3 detik setelah coba1.txt dibuat 
+- Menggunakan fungsi ```snprintf()``` memformat dan menyimpan coba2.txt yang mau disimpan di direktori dalam buffer array.
+- Membuat file coba2.txt menggunakan perintah ```touch()```, dan di eksekusi menggunakan perintah ```execv()```
