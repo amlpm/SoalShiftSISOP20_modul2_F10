@@ -6,6 +6,7 @@ Buatlah program C yang menyerupai crontab untuk menjalankan script bash dengan
 ketentuan sebagai berikut:
 
 Jawab : 
+
 Fungsi untuk mengecek apakah string yang diinputkan * atau tidak
 ```Javascript
 int isStar(char * str){
@@ -74,10 +75,10 @@ int main(int argc, char ** argv) {
 
 	int second, minute, hour;
 	
- Praktikum 2 SISOPm(&second, 0, 59, argv[1]);
- Praktikum 2 SISOPm(&minute, 0, 59, argv[2]);
- Praktikum 2 SISOPm(&hour, 0, 23, argv[3]);
- Praktikum 2 SISOP
+ 	assignParanm(&second, 0, 59, argv[1]);
+ 	assignParanm(&minute, 0, 59, argv[2]);
+ 	assignParanm(&hour, 0, 23, argv[3]);
+
 	if ((chdir("/")) < 0) {
 		exit(EXIT_FAILURE);
 	}
@@ -188,9 +189,80 @@ Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50
 - Mengubah directory menggunakan ```chdir()``` agar hasil yang diperoleh akan masuk ke directory yang kita mau
 - Eksekusi perintah menggunakan ```execv```
 
+### 2. Soal Dua :
+
+#### a.Pertama-tama, Kiwa membuat sebuah folder khusus, di dalamnya dia membuat sebuah program C yang per 30 detik membuat sebuah folder dengan nama timestamp [YYYY-mm-dd_HH:ii:ss].
+Jawab
+```Javascript
+		pid_t p = fork();
+		time_t t = time(NULL);
+		struct tm tt = *localtime(&t);
+		char folderName[20];
+		snprintf(folderName, sizeof(folderName), "%04d-%02d-%02d_%02d:%02d:%02d", tt.tm_year + 1900, tt.tm_mon+1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec);
+		if(p == 0){
+			p = fork();
+			if(p == 0){
+				char * arg[] = {"mkdir", "-p", folderName, NULL};
+				execv("/bin/mkdir", arg);
+			}
+			wait(NULL)
+```
+- Apabila child process, maka buat direktori menggunakan command ```mkdir -p``` dengan nama yang sudah di tentukan. 
+- Memberi nama pada direktori menggunakan  ```struct tm tt = *localtime(&t)``` untuk mengambil argument tipe data ```time_t t``` dimana t adalah detik Epoch UNIX yang mengambil waktu [YYYY-mm-dd_HH:ii:ss]
+-  Jalankan program menggunakan perintah ```execv()```
+- Menggunakan ```wait(NULL)``` untuk mendelay proses selanjutny sampai child process (membuat direktori) selesai
+- Ada perintah ```sleep(30)``` pada bagian paling akhir dr kodingan yang menunjukkan akan dilakukan perulangan terus setiap 30 detik sampai daemon process nya di kill
+
+#### b.Tiap-tiap folder lalu diisi dengan 20 gambar yang di download dari https://picsum.photos/, dimana tiap gambar di download setiap 5 detik. Tiap gambar berbentuk persegi dengan ukuran (t%1000)+100 piksel  dimana t adalah detik Epoch Unix. Gambar tersebut diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss].
+Jawab :
+```Javascript
+			 for(int i = 0; i < 20; i++){
+				p = fork();
+				if(p == 0){
+					t = time(NULL);
+					tt = *localtime(&t);
+					char name[50];
+					snprintf(name, sizeof(name), "./%s/%04d-%02d-%02d_%02d:%02d:%02d", folderName, tt.tm_year + 1900, tt.tm_mon+1, tt.tm_mday, tt.tm_hour, tt.tm_min, tt.tm_sec);
+					char url[25];
+					snprintf(url, sizeof(url), "https://picsum.photos/%ld", t%1000+100);
+					char * arg[] = {"wget", "-O", name, url, NULL};
+					execv("/usr/bin/wget", arg);
+				}
+				wait(NULL);
+				sleep(5);
+			}
+```
+
+#### c.Agar rapi, setelah sebuah folder telah terisi oleh 20 gambar, folder akan di zip dan folder akan di delete(sehingga hanya menyisakan .zip).
+Jawab :
+```Javascript
+			p = fork();
+			if(p == 0){
+				char fileName[30];
+				snprintf(fileName, sizeof(fileName), "%s.zip", folderName);
+				char * arg[] = {"zip", fileName, folderName, NULL};
+				execv("/usr/bin/zip", arg);
+			}
+			wait(NULL);
+			char * arg[] = {"rm", "-r", folderName};
+			execv("/bin/rm", arg);
+			break;
+		}
+		sleep(30)
+```
+
+#### d.Karena takut program tersebut lepas kendali, Kiwa ingin program tersebut men-generate sebuah program "killer" yang siap di run(executable) untuk menterminasi semua operasi program tersebut.  Setelah di run, program yang menterminasi ini lalu akan mendelete dirinya sendiri.
+Jawab :
+
+
+#### e.Kiwa menambahkan bahwa program utama bisa dirun dalam dua mode, yaitu MODE_A dan MODE_B. untuk mengaktifkan MODE_A, program harus dijalankan dengan argumen -a. Untuk MODE_B, program harus dijalankan dengan argumen -b. Ketika dijalankan dalam MODE_A, program utama akan langsung menghentikan semua operasinya ketika program killer dijalankan. Untuk MODE_B, ketika program killer dijalankan, program utama akan berhenti tapi membiarkan proses di setiap folder yang masih berjalan sampai selesai(semua folder terisi gambar, terzip lalu di delete).
+Jawab :
+
+
 ### 3. Soal Tiga :
 
-##### a. Program buatan jaya harus bisa membuat dua direktori di “/home/[USER]/modul2/”. Direktori yang pertama diberi nama “indomie”, lalu lima detik kemudian membuat direktori yang kedua bernama “sedaap”.
+#### a. Program buatan jaya harus bisa membuat dua direktori di “/home/[USER]/modul2/”. Direktori yang pertama diberi nama “indomie”, lalu lima detik kemudian membuat direktori yang kedua bernama “sedaap”.
+Jawab : 
 ```Javascript
 	pid_t pid = fork();
 
@@ -215,24 +287,85 @@ Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50
 		execv("/bin/mkdir", arg);
 	}
 ```
-- Untuk membuat direktori, ```fork()``` dulu. Apabila merupakan child process, maka buat direktori, lalu jalankan program menggunakan perintah ```execv()```
+- Untuk membuat direktori pertama (indomie), ```fork()``` dulu. Apabila merupakan child process, maka buat direktori menggunakan ```mkdir -p```, lalu jalankan program menggunakan perintah ```execv()```
+- ```wait(NULL)``` untuk mendelay proses pembuatan direktori sedaap yang merupakan proses selanjutnya
+- Menggunakan perintah ```sleep(5)``` karena direktori sedaap akan dibuat 5 detik setelah direktori indomie dibuat 
 
+#### b. Kemudian program tersebut harus meng-ekstrak file jpg.zip di direktori“/home/[USER]/modul2/”. 
+Jawab : 
+```Javascript
+pid = fork();
+	if(pid < 0)
+		exit(EXIT_FAILURE);
+	if(pid == 0){
+		char * arg[] = {"unzip", "./modul2/jpg.zip", "-d", "./modul2", NULL};
+		execv("/usr/bin/unzip", arg);
+	}
+	wait(NULL);
+```
+ - Untuk meng unzip file, ```fork()``` dulu. Apabila merupakan child process, maka unzip jpg menggunakan ```unzip()``` , lalu jalankan program menggunakan perintah ```execv()```
+ - Menggunakan system call ```wait()``` untuk mendelay proses pemindahan file / direktori ( proses soal no 3 )
 
+#### c. Diberilah tugas baru yaitu setelah di ekstrak, hasil dari ekstrakan tersebut (didalam direktori “home/[USER]/modul2/jpg/”) harus dipindahkan sesuai dengan pengelompokan, semua file harus dipindahkan ke“/home/[USER]/modul2/sedaap/” dan semua direktori harus dipindahkan ke “/home/[USER]/modul2/indomie/”.
+Jawab :
+```Javascript
+	struct dirent * de;
+	DIR * directory = opendir("./modul2/jpg");
+	while((de = readdir(directory)) != NULL){
+		if(strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
+			continue;
+		char fileName[300];
+		char destName[300];
+		if(de->d_type == DT_DIR){
+			snprintf(fileName, sizeof(fileName), "./modul2/jpg/%s", de->d_name);
+			snprintf(destName, sizeof(destName), "./modul2/indomie/%s", de->d_name);
+			pid = fork();
+			if(pid == 0){
+				char * arg[] = {"mv", fileName, destName, NULL};
+				execv("/bin/mv", arg);
+			}
+			else{
+			snprintf(fileName, sizeof(fileName), "./modul2/jpg/%s", de->d_name);
+			snprintf(destName, sizeof(destName), "./modul2/sedaap/%s", de->d_name);
+			pid = fork();
+			if(pid == 0){
+				char * arg[] = {"mv", fileName, destName, NULL};
+				execv("/bin/mv", arg);
+			}
+			wait(NULL);
+```
+- ```wait(NULL)``` untuk mendelay proses pembuatan file coba2.txt yang merupakan rposes selanjutnya
+-  ```struct dirent * de``` adalah struct untuk membaca file yang ada di direktori
+- Perintah akan dijalankan apabila directory tidak kosong, sehingga menggunakan perintah ```readdir(directory)```
+- Apabila direktori berupa . dan .., maka direktori tidak termasuk (proses jalan terus / continue), sehingga harus dibandingkan dengan de menggunakan ```strcmp()```
+- Apabila tipe de merupakan direktori, maka menggunakan fungsi ```snprintf()``` memformat dan menyimpan nama hasil ekstrak (yang ber tipe direktori) yang mau disimpan di direktori indomie dalam buffer array.
+- Memindahkan nama hasil ekstrak (yang ber tipe direktori) ke direktori indomie menggunakan ```mv```, setelah di ```fork()``` terlebih dahulu
+- Apabila tipe de merupakan file, maka menggunakan fungsi ```snprintf()``` memformat dan menyimpan nama hasil ekstrak (yang ber tipe file) yang mau disimpan di direktori sedaap dalam buffer array.
+- Memindahkan nama hasil ekstrak (yang ber tipe file) ke direktori sedaap menggunakan ```mv```, setelah di ```fork()``` terlebih dahulu
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#### d. Untuk setiap direktori yang dipindahkan ke “/home/[USER]/modul2/indomie/”harus membuat dua file kosong. File yang pertama diberi nama “coba1.txt”, lalu3 detik kemudian membuat file bernama “coba2.txt”. (contoh : “/home/[USER]/modul2/indomie/{nama_folder}/coba1.txt”).
+Jawab : 
+```Javascript
+snprintf(fileName, sizeof(fileName), "%s/coba1.txt", destName);
+pid = fork();
+if(pid == 0){
+	char * arg[] = {"touch", fileName, NULL};
+	execv("/usr/bin/touch", arg);
+}
+wait(NULL);
+sleep(3);
+snprintf(fileName, sizeof(fileName), "%s/coba2.txt", destName);
+pid = fork();
+if(pid == 0){
+	char * arg[] = {"touch", fileName, NULL};
+	execv("/usr/bin/touch", arg);
+}
+wait(NULL);
+```
+-  Apabila de bertipe direktori, maka ada 2 file kosong yang akan dibuat, yaitu file coba1.txt dan coba2.txt.
+- Menggunakan fungsi ```snprintf()``` memformat dan menyimpan coba1.txt yang mau disimpan di direktori dalam buffer array.
+- Membuat file coba1.txt menggunakan perintah ```touch()```, dan di eksekusi menggunakan perintah ```execv()```
+- ```wait(NULL)``` untuk mendelay proses pembuatan file coba2.txt yang merupakan rposes selanjutnya
+- Menggunakan perintah ```sleep(3)``` karena file coba2.txt akan dibuat 3 detik setelah coba1.txt dibuat 
+- Menggunakan fungsi ```snprintf()``` memformat dan menyimpan coba2.txt yang mau disimpan di direktori dalam buffer array.
+- Membuat file coba2.txt menggunakan perintah ```touch()```, dan di eksekusi menggunakan perintah ```execv()```
