@@ -255,6 +255,7 @@ Jawab :
 ```
 - Melakukan ```fork()``` agar terbentuk child process dan menggunakan perintah ```snprintf()``` memformat dan menyimpan nama dari zip ke array fileName
 - Men-zip file menggunakan perintah ```zip``` dan dieksekusi menggunakan perintah ```execv()```
+- Lalu direktori yang di zip di hapus menggunakan perintah ```rm -r``` dan dieksekusi menggunakan ```execv()```
 
 #### d.Karena takut program tersebut lepas kendali, Kiwa ingin program tersebut men-generate sebuah program "killer" yang siap di run(executable) untuk menterminasi semua operasi program tersebut.  Setelah di run, program yang menterminasi ini lalu akan mendelete dirinya sendiri.
 Jawab :
@@ -267,7 +268,6 @@ Jawab :
 
 	chmod("killer.sh", ~0);
 ```
-
 
 
 #### e.Kiwa menambahkan bahwa program utama bisa dirun dalam dua mode, yaitu MODE_A dan MODE_B. untuk mengaktifkan MODE_A, program harus dijalankan dengan argumen -a. Untuk MODE_B, program harus dijalankan dengan argumen -b. Ketika dijalankan dalam MODE_A, program utama akan langsung menghentikan semua operasinya ketika program killer dijalankan. Untuk MODE_B, ketika program killer dijalankan, program utama akan berhenti tapi membiarkan proses di setiap folder yang masih berjalan sampai selesai(semua folder terisi gambar, terzip lalu di delete).
