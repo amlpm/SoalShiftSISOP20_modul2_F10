@@ -169,19 +169,19 @@ while (1) {
 - Mengecek jam, apabila berupa *, maka dijalankan setiap jam (tidak pengaruh pada delay), jadi tidak menjalankan apa-apa. 
 Namun apabila jam berupa digit desimal, maka ada 2 kemungkinan, yaitu digit input lebih dari / kurang dari waktu sekarang 
 Apabila digit input kurang dari waktu sekarang, maka delaynya adalah 23 dikurang jam yang sekarang dan di tambah jam selanjutnya dimana perintah mau dieksekusi. 
-Misalkan ingin sekarang jam 15.00, dan mau di eksekusi jam 00.00, maka 23 - 15 + 0 = 8 jam delay.
+Misalkan ingin sekarang jam 15.00, dan mau di eksekusi jam 00.00, maka 24 - 15 + 0 = 9 jam delay.
 Apabila digit input lebih dari waktu sekarang, maka delaynya jam yang sekarang dan di kurang jam selanjutnya dimana perintah mau dieksekusi. 
 Misalkan ingin sekarang jam 15.00, dan mau di eksekusi jam 18.00, maka 18 - 15 = 3 jam delay.
 - Mengecek menit, apabila berupa *, maka dijalankan setiap menit (tidak pengaruh pada delay), jadi tidak menjalankan apa-apa. 
 Namun apabila menit berupa digit desimal, maka ada 2 kemungkinan, yaitu digit input lebih dari / kurang dari waktu sekarang 
 Apabila digit input kurang dari waktu sekarang, maka delaynya adalah 59 dikurang menit yang sekarang dan di tambah menit selanjutnya dimana perintah mau dieksekusi. 
-Misalkan ingin sekarang menit ke 45, dan mau di eksekusi pada menit ke 30, maka 59 - 45 + 30 = 44 menit delay.
+Misalkan ingin sekarang menit ke 45, dan mau di eksekusi pada menit ke 30, maka 60 - 45 + 30 = 45 menit delay.
 Apabila digit input lebih dari waktu sekarang, maka delaynya menit yang sekarang dan di kurang menit selanjutnya dimana perintah mau dieksekusi. 
 Misalkan ingin sekarang menit ke 45 dan mau di eksekusi di menit ke 50 , maka 50 - 45 = 5 menit delay.
 - Mengecek detik, apabila berupa *, maka dijalankan setiap detik (tidak pengaruh pada delay), jadi tidak menjalankan apa-apa. 
 Namun apabila detik berupa digit desimal, maka ada 2 kemungkinan, yaitu digit input lebih dari / kurang dari waktu sekarang 
 Apabila digit input kurang dari waktu sekarang, maka delaynya adalah 59 dikurang detik yang sekarang dan di tambah detik selanjutnya dimana perintah mau dieksekusi. 
-Misalkan ingin sekarang detik ke 45, dan mau di eksekusi pada detik ke 30, maka 59 - 45 + 30 = 44 detik delay.
+Misalkan ingin sekarang detik ke 45, dan mau di eksekusi pada detik ke 30, maka 60 - 45 + 30 = 45 detik delay.
 Apabila digit input lebih dari waktu sekarang, maka delaynya detik yang sekarang dan di kurang detik selanjutnya dimana perintah mau dieksekusi. 
 Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50 - 45 = 5 detik delay.
 - ```if(timeToSleep == 0)timeToSleep = 1``` digunakan untuk mengset nilai minimum delay yaitu 1 detik
@@ -232,6 +232,10 @@ Jawab :
 				sleep(5);
 			}
 ```
+- Perulangan sebanyak 20 kali untuk menyimpan gambar, dan di akhir perulangan menggunakan perintah ```wait(NULL) untuk mendelay proses berikutnya (zip folder) dan ```sleep(5)``` untuk mendownload gambar setiap 5 detik
+- Melakukan ```fork()``` agar terbentuk child process, lalu memakai perintah ```snprintf()``` memformat dan menyimpan nama gambar yang di ber format [YYYY-mm-dd_HH:ii:ss] menggunakan  ```struct tm tt = *localtime(&t)``` untuk mengambil argument tipe data ```time_t t``` dimana t adalah detik Epoch UNIX yang mau disimpan di nama (nama dari gambar). Begitu juga dengan untuk mendownload gambar, https://picsum.photos/%ld harus di format dan disimpan dulu di url menggunakan ```snprintf()``` sebelum menggunakan perintah ```wget()``` untuk mendownload gambar
+- Menggunakan perintah ```wget -O``` untuk mendownload gambar dari url dan menyimpan di file 'nama'
+- Eksekusi perintah menggunakan ```execv()```
 
 #### c.Agar rapi, setelah sebuah folder telah terisi oleh 20 gambar, folder akan di zip dan folder akan di delete(sehingga hanya menyisakan .zip).
 Jawab :
@@ -248,15 +252,37 @@ Jawab :
 			execv("/bin/rm", arg);
 			break;
 		}
-		sleep(30)
 ```
+- Melakukan ```fork()``` agar terbentuk child process dan menggunakan perintah ```snprintf()``` memformat dan menyimpan nama dari zip ke array fileName
+- Men-zip file menggunakan perintah ```zip``` dan dieksekusi menggunakan perintah ```execv()```
+- Lalu direktori yang di zip di hapus menggunakan perintah ```rm -r``` dan dieksekusi menggunakan ```execv()```
 
 #### d.Karena takut program tersebut lepas kendali, Kiwa ingin program tersebut men-generate sebuah program "killer" yang siap di run(executable) untuk menterminasi semua operasi program tersebut.  Setelah di run, program yang menterminasi ini lalu akan mendelete dirinya sendiri.
 Jawab :
+```Javascript
+	FILE * killer = fopen("killer.sh", "w");
+	fprintf(killer, "#!/bin/bash\n");
+	fprintf(killer, "kill_parent(){\n");
+	fprintf(killer, "kill ${@: -1}\n");
+	fprintf(killer, "}\n");
+
+	chmod("killer.sh", ~0);
+```
 
 
 #### e.Kiwa menambahkan bahwa program utama bisa dirun dalam dua mode, yaitu MODE_A dan MODE_B. untuk mengaktifkan MODE_A, program harus dijalankan dengan argumen -a. Untuk MODE_B, program harus dijalankan dengan argumen -b. Ketika dijalankan dalam MODE_A, program utama akan langsung menghentikan semua operasinya ketika program killer dijalankan. Untuk MODE_B, ketika program killer dijalankan, program utama akan berhenti tapi membiarkan proses di setiap folder yang masih berjalan sampai selesai(semua folder terisi gambar, terzip lalu di delete).
 Jawab :
+```Javascript
+	fprintf(killer, "if [ $1 == \"-a\" ]\n");
+	fprintf(killer, "then\n");
+	fprintf(killer, "kill $(pidof soal2)\n");
+	fprintf(killer, "elif [ $1 == \"-b\" ]\n");
+	fprintf(killer, "then\n");
+	fprintf(killer, "kill_parent $(pidof soal2)\n");
+	fprintf(killer, "fi\n");
+	fprintf(killer, "rm $0\n");
+	fclose(killer);
+```
 
 
 ### 3. Soal Tiga :
