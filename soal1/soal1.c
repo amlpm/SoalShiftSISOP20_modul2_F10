@@ -105,7 +105,9 @@ int main(int argc, char ** argv) {
 		}
 		timeToSleep *= 60;
 		if(minute == -1){
-
+			if(timeToSleep > 0){
+				timeToSleep -= timeNow->tm_min;
+			}
 		}else if(timeNow->tm_min <= minute){
 			timeToSleep += minute - timeNow->tm_min;
 		}else{
@@ -115,7 +117,9 @@ int main(int argc, char ** argv) {
 		}
 		timeToSleep *= 60;
 		if(second == -1){
-			
+			if(timeToSleep > 0){
+				timeToSleep -= timeNow->tm_sec;
+			}
 		}else if(timeNow->tm_sec <= second){
 			timeToSleep += second - timeNow->tm_sec;
 		}else{
