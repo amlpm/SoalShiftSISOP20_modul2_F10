@@ -192,7 +192,7 @@ Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50
 ### 2. Soal Dua :
 
 #### a.Pertama-tama, Kiwa membuat sebuah folder khusus, di dalamnya dia membuat sebuah program C yang per 30 detik membuat sebuah folder dengan nama timestamp [YYYY-mm-dd_HH:ii:ss].
-Jawab
+Jawab :
 ```Javascript
 		pid_t p = fork();
 		time_t t = time(NULL);
