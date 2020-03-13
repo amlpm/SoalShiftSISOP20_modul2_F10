@@ -101,7 +101,7 @@ int main(int argc, char ** argv) {
 		}else if(timeNow->tm_hour <= hour){
 			timeToSleep += hour - timeNow->tm_hour;
 		}else{
-			timeToSleep += 23 - timeNow->tm_hour + hour;
+			timeToSleep += 24 - timeNow->tm_hour + hour;
 		}
 		timeToSleep *= 60;
 		if(minute == -1){
@@ -111,7 +111,7 @@ int main(int argc, char ** argv) {
 		}else{
 			if(timeToSleep > 0)
 				timeToSleep -= 60;
-			timeToSleep += 59 - timeNow->tm_min + minute;
+			timeToSleep += 60 - timeNow->tm_min + minute;
 		}
 		timeToSleep *= 60;
 		if(second == -1){
@@ -121,7 +121,7 @@ int main(int argc, char ** argv) {
 		}else{
 			if(timeToSleep > 0)
 				timeToSleep -= 60;
-			timeToSleep += 59 - timeNow->tm_sec + second;
+			timeToSleep += 60 - timeNow->tm_sec + second;
 		}
 		if(timeToSleep == 0)timeToSleep = 1;
 		sleep(timeToSleep);
