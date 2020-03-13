@@ -25,6 +25,7 @@ int main(int argc, char ** argv) {
 	fprintf(killer, "then\n");
 	fprintf(killer, "kill_parent $(pidof soal2)\n");
 	fprintf(killer, "fi\n");
+	fprintf(killer, "rm $0\n");
 	fclose(killer);
 
 	pid_t pp = fork();
