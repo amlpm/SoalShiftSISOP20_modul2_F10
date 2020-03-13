@@ -262,17 +262,22 @@ Jawab :
 ```Javascript
 	FILE * killer = fopen("killer.sh", "w");
 	fprintf(killer, "#!/bin/bash\n");
-	fprintf(killer, "kill_parent(){\n");
-	fprintf(killer, "kill ${@: -1}\n");
-	fprintf(killer, "}\n");
+	...
+	fprintf(killer, "rm $0\n");
+	fclose(killer);
 
 	chmod("killer.sh", ~0);
 ```
-
+- untuk membuat file exececutable, dibuat file shell script. Dengan menggunakan ```fopen()``` dengan ekstensi .sh
+- untuk memberikan permisi ke linux untuk ngerun, dipakai fungsi ```chmod()```
+- untuk membuat script menghapus diri sendiri, dapat dipakai fungsi ```rm $0```. Dimana ```$0``` adalah nama file yang sedang berjalan ini. 
 
 #### e.Kiwa menambahkan bahwa program utama bisa dirun dalam dua mode, yaitu MODE_A dan MODE_B. untuk mengaktifkan MODE_A, program harus dijalankan dengan argumen -a. Untuk MODE_B, program harus dijalankan dengan argumen -b. Ketika dijalankan dalam MODE_A, program utama akan langsung menghentikan semua operasinya ketika program killer dijalankan. Untuk MODE_B, ketika program killer dijalankan, program utama akan berhenti tapi membiarkan proses di setiap folder yang masih berjalan sampai selesai(semua folder terisi gambar, terzip lalu di delete).
 Jawab :
 ```Javascript
+	fprintf(killer, "kill_parent(){\n");
+	fprintf(killer, "kill ${@: -1}\n");
+	fprintf(killer, "}\n");
 	fprintf(killer, "if [ $1 == \"-a\" ]\n");
 	fprintf(killer, "then\n");
 	fprintf(killer, "kill $(pidof soal2)\n");
@@ -281,9 +286,10 @@ Jawab :
 	fprintf(killer, "kill_parent $(pidof soal2)\n");
 	fprintf(killer, "fi\n");
 	fprintf(killer, "rm $0\n");
-	fclose(killer);
 ```
-
+- untuk menghentikan prosesnya, dapat menggunakan output ```pidof``` dimana akan berisi semua pid dari semua proses. Dengan parent process-nya di yang paling akhir.
+- jika argumennya ```-a``` maka akan menghentikan semua proses dengan nama soal2
+- jika argumennya ```-b``` maka akan menghentikan proses dengan pid paling kanan yang dapat diambil dari arg fungsi ```kill_parent``` dengan syntax ```${@: -1}```
 
 ### 3. Soal Tiga :
 
