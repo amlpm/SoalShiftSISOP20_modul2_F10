@@ -146,6 +146,6 @@ int main(int argc, char ** argv) {
 			chdir(dir);
 			execv("/bin/bash", basharg);
 		}
-
+		sleep(1);
 	}
 }
