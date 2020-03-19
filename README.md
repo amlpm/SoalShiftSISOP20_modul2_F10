@@ -171,14 +171,14 @@ Namun apabila jam berupa digit desimal, maka ada 2 kemungkinan, yaitu digit inpu
 Apabila digit input kurang dari waktu sekarang, maka delaynya adalah 23 dikurang jam yang sekarang dan di tambah jam selanjutnya dimana perintah mau dieksekusi. 
 Misalkan ingin sekarang jam 15.00, dan mau di eksekusi jam 00.00, maka 24 - 15 + 0 = 9 jam delay.
 Apabila digit input lebih dari waktu sekarang, maka delaynya jam yang sekarang dan di kurang jam selanjutnya dimana perintah mau dieksekusi. 
-Misalkan ingin sekarang jam 15.00, dan mau di eksekusi jam 18.00, maka 18 - 15 = 3 jam delay.
-- Mengecek menit, apabila berupa *, maka dijalankan setiap menit (tidak pengaruh pada delay), jadi tidak menjalankan apa-apa. 
+Misalkan ingin sekarang jam 15.00, dan mau di eksekusi jam 18.00, maka 18 - 15 = 3 jam delay. Lalu timeToSleep nya di * 60 (di convert ke menit)
+- Mengecek menit, apabila berupa *, maka dijalankan setiap menit. TimeToSleep yang sudah dijumlah pada saat mengecek jam akan dikurangkan dengan menit sekarang (karena perintah berjalan tiap menit apabila berupa bintang) sehingga tidak ada delay. 
 Namun apabila menit berupa digit desimal, maka ada 2 kemungkinan, yaitu digit input lebih dari / kurang dari waktu sekarang 
 Apabila digit input kurang dari waktu sekarang, maka delaynya adalah 59 dikurang menit yang sekarang dan di tambah menit selanjutnya dimana perintah mau dieksekusi. 
-Misalkan ingin sekarang menit ke 45, dan mau di eksekusi pada menit ke 30, maka 60 - 45 + 30 = 45 menit delay.
+Misalkan ingin sekarang menit ke 45, dan mau di eksekusi pada menit ke 30, maka 60 - 45 + 30 = 45 menit delay. * 60 (di convert ke menit)
 Apabila digit input lebih dari waktu sekarang, maka delaynya menit yang sekarang dan di kurang menit selanjutnya dimana perintah mau dieksekusi. 
 Misalkan ingin sekarang menit ke 45 dan mau di eksekusi di menit ke 50 , maka 50 - 45 = 5 menit delay.
-- Mengecek detik, apabila berupa *, maka dijalankan setiap detik (tidak pengaruh pada delay), jadi tidak menjalankan apa-apa. 
+- Mengecek detik, apabila berupa *, maka dijalankan setiap detik.  TimeToSleep yang sudah dijumlah pada saat mengecek menit akan dikurangkan dengan detik sekarang (karena perintah berjalan tiap detik apabila berupa bintang sehingga tidak ada delay).
 Namun apabila detik berupa digit desimal, maka ada 2 kemungkinan, yaitu digit input lebih dari / kurang dari waktu sekarang 
 Apabila digit input kurang dari waktu sekarang, maka delaynya adalah 59 dikurang detik yang sekarang dan di tambah detik selanjutnya dimana perintah mau dieksekusi. 
 Misalkan ingin sekarang detik ke 45, dan mau di eksekusi pada detik ke 30, maka 60 - 45 + 30 = 45 detik delay.
@@ -192,7 +192,7 @@ Misalkan ingin sekarang detik ke 45 dan mau di eksekusi di detik ke 50 , maka 50
 ### 2. Soal Dua :
 
 #### a.Pertama-tama, Kiwa membuat sebuah folder khusus, di dalamnya dia membuat sebuah program C yang per 30 detik membuat sebuah folder dengan nama timestamp [YYYY-mm-dd_HH:ii:ss].
-Jawab
+Jawab :
 ```Javascript
 		pid_t p = fork();
 		time_t t = time(NULL);
@@ -268,9 +268,9 @@ Jawab :
 
 	chmod("killer.sh", ~0);
 ```
-- untuk membuat file exececutable, dibuat file shell script. Dengan menggunakan ```fopen()``` dengan ekstensi .sh
-- untuk memberikan permisi ke linux untuk ngerun, dipakai fungsi ```chmod()```
-- untuk membuat script menghapus diri sendiri, dapat dipakai fungsi ```rm $0```. Dimana ```$0``` adalah nama file yang sedang berjalan ini. 
+- Untuk membuat file exececutable, dibuat file shell script. Dengan menggunakan ```fopen()``` dengan ekstensi .sh
+- Memberikan permisi ke linux untuk ngerun menggunakan fungsi ```chmod()```
+- Untuk membuat script menghapus diri sendiri, dapat dipakai fungsi ```rm $0```. Dimana ```$0``` adalah nama file yang sedang berjalan ini. 
 
 #### e.Kiwa menambahkan bahwa program utama bisa dirun dalam dua mode, yaitu MODE_A dan MODE_B. untuk mengaktifkan MODE_A, program harus dijalankan dengan argumen -a. Untuk MODE_B, program harus dijalankan dengan argumen -b. Ketika dijalankan dalam MODE_A, program utama akan langsung menghentikan semua operasinya ketika program killer dijalankan. Untuk MODE_B, ketika program killer dijalankan, program utama akan berhenti tapi membiarkan proses di setiap folder yang masih berjalan sampai selesai(semua folder terisi gambar, terzip lalu di delete).
 Jawab :
@@ -287,9 +287,9 @@ Jawab :
 	fprintf(killer, "fi\n");
 	fprintf(killer, "rm $0\n");
 ```
-- untuk menghentikan prosesnya, dapat menggunakan output ```pidof``` dimana akan berisi semua pid dari semua proses. Dengan parent process-nya di yang paling akhir.
-- jika argumennya ```-a``` maka akan menghentikan semua proses dengan nama soal2
-- jika argumennya ```-b``` maka akan menghentikan proses dengan pid paling kanan yang dapat diambil dari arg fungsi ```kill_parent``` dengan syntax ```${@: -1}```
+- Untuk menghentikan prosesnya, dapat menggunakan output ```pidof``` dimana akan berisi semua pid dari semua proses. Dengan parent process-nya di yang paling akhir.
+- Jika argumennya ```-a``` maka akan menghentikan semua proses dengan nama soal2
+- Jika argumennya ```-b``` maka akan menghentikan proses dengan pid paling kanan yang dapat diambil dari arg fungsi ```kill_parent``` dengan syntax ```${@: -1}```
 
 ### 3. Soal Tiga :
 
