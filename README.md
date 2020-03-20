@@ -262,11 +262,19 @@ Jawab :
 ```Javascript
 	FILE * killer = fopen("killer.sh", "w");
 	fprintf(killer, "#!/bin/bash\n");
-	...
+	if(strcmp("-a", argv[1]) == 0){
+		fprintf(killer, "kill $(pidof soal2)\n");
+	}else if(strcmp("-b", argv[1]) == 0){
+		fprintf(killer, "kill_parent(){\n");
+		fprintf(killer, "kill ${@: -1}\n");
+		fprintf(killer, "}\n");
+		fprintf(killer, "kill_parent $(pidof soal2)\n");
+	}
 	fprintf(killer, "rm $0\n");
 	fclose(killer);
 
 	chmod("killer.sh", ~0);
+
 ```
 - Untuk membuat file exececutable, dibuat file shell script. Dengan menggunakan ```fopen()``` dengan ekstensi .sh
 - Memberikan permisi ke linux untuk ngerun menggunakan fungsi ```chmod()```
@@ -275,17 +283,14 @@ Jawab :
 #### e.Kiwa menambahkan bahwa program utama bisa dirun dalam dua mode, yaitu MODE_A dan MODE_B. untuk mengaktifkan MODE_A, program harus dijalankan dengan argumen -a. Untuk MODE_B, program harus dijalankan dengan argumen -b. Ketika dijalankan dalam MODE_A, program utama akan langsung menghentikan semua operasinya ketika program killer dijalankan. Untuk MODE_B, ketika program killer dijalankan, program utama akan berhenti tapi membiarkan proses di setiap folder yang masih berjalan sampai selesai(semua folder terisi gambar, terzip lalu di delete).
 Jawab :
 ```Javascript
-	fprintf(killer, "kill_parent(){\n");
-	fprintf(killer, "kill ${@: -1}\n");
-	fprintf(killer, "}\n");
-	fprintf(killer, "if [ $1 == \"-a\" ]\n");
-	fprintf(killer, "then\n");
-	fprintf(killer, "kill $(pidof soal2)\n");
-	fprintf(killer, "elif [ $1 == \"-b\" ]\n");
-	fprintf(killer, "then\n");
-	fprintf(killer, "kill_parent $(pidof soal2)\n");
-	fprintf(killer, "fi\n");
-	fprintf(killer, "rm $0\n");
+	if(strcmp("-a", argv[1]) == 0){
+		fprintf(killer, "kill $(pidof soal2)\n");
+	}else if(strcmp("-b", argv[1]) == 0){
+		fprintf(killer, "kill_parent(){\n");
+		fprintf(killer, "kill ${@: -1}\n");
+		fprintf(killer, "}\n");
+		fprintf(killer, "kill_parent $(pidof soal2)\n");
+	}
 ```
 - Untuk menghentikan prosesnya, dapat menggunakan output ```pidof``` dimana akan berisi semua pid dari semua proses. Dengan parent process-nya di yang paling akhir.
 - Jika argumennya ```-a``` maka akan menghentikan semua proses dengan nama soal2
